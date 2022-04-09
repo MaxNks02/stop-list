@@ -62,7 +62,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = ApiErrorMessages.UNSUPPORTED_MEDIA_TYPE + " ( " + Arrays.toString(ex.getSupportedMediaTypes().toArray()) + " ) ";
-        return buildResponseEntity(new ErrorResults(error, 41500), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        return buildResponseEntity(new ErrorResults(error, 415), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     /**
@@ -77,7 +77,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = ApiErrorMessages.BAD_REQUEST + " ( " + ex.getParameter() + " ) ";
-        return buildResponseEntity(new ErrorResults(error, 40400), HttpStatus.BAD_REQUEST);
+        return buildResponseEntity(new ErrorResults(error, 400), HttpStatus.BAD_REQUEST);
     }
 
 
@@ -93,7 +93,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = ApiErrorMessages.BAD_REQUEST + " ( " + ex.getParameterType() + " : " + ex.getParameterName() + " ) ";
-        return buildResponseEntity(new ErrorResults(error, 40401), HttpStatus.BAD_REQUEST);
+        return buildResponseEntity(new ErrorResults(error, 400), HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -108,7 +108,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = ApiErrorMessages.BAD_REQUEST + " Required type is ( " + ex.getRequiredType() + " ) ";
-        return buildResponseEntity(new ErrorResults(error, 40402), HttpStatus.BAD_REQUEST);
+        return buildResponseEntity(new ErrorResults(error, 400), HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -123,7 +123,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         logger.error("Field not valid", ex.getFieldError());
-        return buildResponseEntity(new ErrorResults(Objects.requireNonNull(ex.getFieldError()).getDefaultMessage(), 40403), HttpStatus.BAD_REQUEST);
+        return buildResponseEntity(new ErrorResults(Objects.requireNonNull(ex.getFieldError()).getDefaultMessage(), 400), HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -135,7 +135,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     protected ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
         logger.error(ex.getMessage(), "Bad request exception");
-        return buildResponseEntity(new ErrorResults(ex.getMessage(), 40000), HttpStatus.BAD_REQUEST);
+        return buildResponseEntity(new ErrorResults(ex.getMessage(), 400), HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -147,7 +147,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CustomNotFoundException.class)
     protected ResponseEntity<Object> handleCustomNotFoundException(CustomNotFoundException ex) {
         logger.error(ex.getLocalizedMessage(), "Not found exception");
-        return buildResponseEntity(new ErrorResults(ex.getMessage(), 40404), HttpStatus.NOT_FOUND);
+        return buildResponseEntity(new ErrorResults(ex.getMessage(), 404), HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -159,7 +159,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DatabaseException.class)
     protected ResponseEntity<Object> handleDatabaseException(DatabaseException ex) {
         logger.error(ex.getLocalizedMessage(), "Database exception");
-        return buildResponseEntity(new ErrorResults(ex.getMessage(), 50001), HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildResponseEntity(new ErrorResults(ex.getMessage(), 501), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private ResponseEntity<Object> buildResponseEntity(ErrorResults errorResults, HttpStatus httpStatus) {

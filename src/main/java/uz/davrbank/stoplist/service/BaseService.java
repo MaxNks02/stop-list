@@ -1,5 +1,9 @@
 package uz.davrbank.stoplist.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import uz.davrbank.stoplist.dao.dto.BaseDto;
 import uz.davrbank.stoplist.dao.mapper.BaseMapper;
 import uz.davrbank.stoplist.dao.model.BaseEntity;
@@ -8,7 +12,9 @@ import uz.davrbank.stoplist.exception.CustomNotFoundException;
 import uz.davrbank.stoplist.exception.DatabaseException;
 import uz.davrbank.stoplist.exception.handler.ApiErrorMessages;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class BaseService<R extends BaseRepo<E>, E extends BaseEntity, D extends BaseDto, M extends BaseMapper<E, D>> {
     private final R repository;
@@ -27,32 +33,55 @@ public abstract class BaseService<R extends BaseRepo<E>, E extends BaseEntity, D
         return mapper;
     }
 
-    public List<E> getAll() {
+    public List<D> getAll() {
         List<E> entityList = repository.findAll();
-        if (entityList.isEmpty()) {
+        if (entityList.isEmpty())
             throw new CustomNotFoundException(String.format(ApiErrorMessages.NOT_FOUND + " %s", "List empty!"));
-        }
-        return entityList;
+        return mapper.convertFromEntityList(entityList);
     }
 
-    public E getById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new CustomNotFoundException(String.format(ApiErrorMessages.NOT_FOUND + "%s Id: %s", "Data not found.", id)));
+    public D getById(Long id) {
+        E entity = repository.findById(id).orElseThrow(() -> new CustomNotFoundException(String.format(ApiErrorMessages.NOT_FOUND + "%s Id: %s", "Data not found.", id)));
+        return mapper.convertFromEntity(entity);
     }
 
-    public E create(E entity) {
+    public E create(D dto) {
         try {
-            return repository.save(entity);
+            return repository.save(mapper.convertFromDto(dto));
         } catch (RuntimeException exception) {
             throw new DatabaseException(String.format(ApiErrorMessages.INTERNAL_SERVER_ERROR + " %s", exception.getMessage()));
         }
     }
 
-    public List<E> creatAll(List<E> entityList) {
+    public List<E> creatAll(List<D> dtoList) {
         try {
-            return repository.saveAll(entityList);
+            return repository.saveAll(mapper.convertFromDtoList(dtoList));
         } catch (RuntimeException exception) {
             throw new DatabaseException(String.format(ApiErrorMessages.INTERNAL_SERVER_ERROR + " %s", exception.getMessage()));
         }
+    }
+
+    public Map<String, Object> getAllWithPagination(Integer page, Integer size){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        Page<D> list;
+
+        try {
+            list = repository.findAll(pageable).map(mapper::convertFromEntity);
+        }catch (RuntimeException exception){
+            throw new DatabaseException(String.format(ApiErrorMessages.INTERNAL_SERVER_ERROR + " %s", exception.getMessage()));
+        }
+
+        if (list.isEmpty())
+            throw new CustomNotFoundException(String.format(ApiErrorMessages.NOT_FOUND + " %s", "List empty!"));
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("elements", list.getContent());
+        data.put("current_page", list.getNumber());
+        data.put("total_elements", list.getTotalElements());
+        data.put("total_pages", list.getTotalPages());
+        data.put("size", list.getSize());
+
+        return data;
     }
 
     public void deleteById(Long id) {

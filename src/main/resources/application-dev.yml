@@ -10,5 +10,5 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         globally_quoted_identifiers: true
     hibernate:
-      ddl-auto: 'create-drop'
+      ddl-auto: update
     open-in-view: false

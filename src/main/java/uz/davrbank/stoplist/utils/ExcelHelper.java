@@ -10,7 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import uz.davrbank.stoplist.dao.model.StopListEntity;
+import uz.davrbank.stoplist.dao.dto.StopListDto;
 import uz.davrbank.stoplist.exception.FileException;
 import uz.davrbank.stoplist.exception.handler.ApiErrorMessages;
 
@@ -23,9 +23,9 @@ import java.util.List;
 public class ExcelHelper {
     public static final String mimeType = "xlsx";
 
-    public List<StopListEntity> excelToList(MultipartFile files) {
+    public List<StopListDto> excelToList(MultipartFile files) {
         @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-        List<StopListEntity> list = new LinkedList<>();
+        List<StopListDto> list = new LinkedList<>();
         XSSFWorkbook workbook;
         try {
             workbook = new XSSFWorkbook(files.getInputStream());
@@ -38,30 +38,31 @@ public class ExcelHelper {
                 break;
             XSSFRow row = worksheet.getRow(index);
 
-//            if (Strings.isNullOrEmpty(getCellValue(row, 0)))
-//                break;
+            StopListDto dto = new StopListDto();
 
-            StopListEntity entity = new StopListEntity();
-            entity.setDocNumber(getCellValue(row, 0));
-            entity.setCyrLastname(getCellValue(row, 1));
-            entity.setCyrFirstname(getCellValue(row, 2));
-            entity.setCyrPatronymic(getCellValue(row, 3));
-            entity.setLatLastname(getCellValue(row, 4));
-            entity.setLatFirstname(getCellValue(row, 5));
-            entity.setLatPatronymic(getCellValue(row, 6));
-            entity.setBirthDate(getCellDateValue(row, 7));
-            entity.setBirthPlace(getCellValue(row, 8));
-            entity.setPSeries(getCellValue(row, 9));
-            entity.setPNumber(getCellValue(row, 10));
-            entity.setPIssueDate(getCellDateValue(row, 11));
-            entity.setRegAddress(getCellValue(row, 12));
-            entity.setStir(getCellValue(row, 13));
-            entity.setWorkplaceInfo(getCellValue(row, 14));
-            entity.setYttRegDate(getCellDateValue(row, 15));
-            entity.setYttRegNumber(getCellValue(row, 16));
-            entity.setYttActivityType(getCellValue(row, 17));
+            dto.setDocType("Национальный");
 
-            list.add(entity);
+            dto.setDocNumber(getCellValue(row, 0));
+            dto.setCyrLastname(getCellValue(row, 1));
+            dto.setCyrFirstname(getCellValue(row, 2));
+            dto.setCyrPatronymic(getCellValue(row, 3));
+            dto.setLatLastname(getCellValue(row, 4));
+            dto.setLatFirstname(getCellValue(row, 5));
+            dto.setLatPatronymic(getCellValue(row, 6));
+            dto.setBirthDate(getCellDateValue(row, 7));
+            dto.setBirthPlace(getCellValue(row, 8));
+            dto.setPSeries(getCellValue(row, 9));
+            dto.setPNumber(getCellValue(row, 10));
+            dto.setPIssueDate(getCellDateValue(row, 11));
+            dto.setRegAddress(getCellValue(row, 12));
+            dto.setNationality(getCellValue(row, 13));
+            dto.setStir(getCellValue(row, 14));
+            dto.setWorkplaceInfo(getCellValue(row, 15));
+            dto.setYattRegDate(getCellDateValue(row, 16));
+            dto.setYattRegNumber(getCellValue(row, 17));
+            dto.setYattActivityType(getCellValue(row, 18));
+
+            list.add(dto);
         }
         return list;
     }

@@ -15,8 +15,8 @@
     <description>stop-list</description>
     <properties>
         <java.version>11</java.version>
-        <mapstruct-version>1.4.2.Final</mapstruct-version>
         <lombok.version>1.18.20</lombok.version>
+        <mapstruct-version>1.4.2.Final</mapstruct-version>
         <validation-version>2.0.1.Final</validation-version>
         <guava-version>31.1-jre</guava-version>
         <open-api-ui-version>1.6.6</open-api-ui-version>
@@ -103,21 +103,21 @@
                     <version>3.8.0</version>
                     <configuration>
                         <annotationProcessorPaths>
-                            <path>
-                                <groupId>org.mapstruct</groupId>
-                                <artifactId>mapstruct-processor</artifactId>
-                                <version>${mapstruct-version}</version>
-                            </path>
-                            <path>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                                <version>${lombok.version}</version>
-                            </path>
                             <dependency>
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok-mapstruct-binding</artifactId>
                                 <version>0.2.0</version>
                             </dependency>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct-version}</version>
+                            </path>
                         </annotationProcessorPaths>
                         <compilerArgs>
                             <compilerArg>

@@ -10,7 +10,7 @@ public abstract class BaseController<S extends BaseService> {
     public static final String V_1 = "/v1";
     public static final String SL = API_PATH + V_1 + "/sl";
 
-    public static final String FILE_UPLOAD = SL + "/file-upload";
+    public static final String FILE_UPLOAD = "/file-upload";
 
     protected S service;
 

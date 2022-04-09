@@ -1,5 +1,6 @@
 package uz.davrbank.stoplist.dao.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -17,6 +18,7 @@ import javax.persistence.*;
 @Table(name = "stop_list")
 public class StopListEntity extends BaseEntity{
     String docNumber;
+    String docType;
     // Name info cyrillic
     String cyrLastname;
     String cyrFirstname;
@@ -34,12 +36,14 @@ public class StopListEntity extends BaseEntity{
     String pIssueDate;
     // Registered or residential address
     String regAddress;
+    // Nationality
+    String nationality;
     // STIR
     String stir;
     // Work place info
     String workplaceInfo;
     // ЯТТ сифатида фаолият кўрсатса
-    String yttRegDate;
-    String yttRegNumber;
-    String yttActivityType;
+    String yattRegDate;
+    String yattRegNumber;
+    String yattActivityType;
 }

@@ -12,33 +12,29 @@ import uz.davrbank.stoplist.dao.repo.StopListRepo;
 import uz.davrbank.stoplist.exception.DatabaseException;
 import uz.davrbank.stoplist.exception.handler.ApiErrorMessages;
 
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
 public class StopListService extends BaseService<StopListRepo, StopListEntity, StopListDto, StopListMapper>{
-    private final StopListRepo repo;
     private final ExcelHelper excelHelper;
 
-    public StopListService(StopListRepo repository, StopListMapper mapper, StopListRepo repo, ExcelHelper excelHelper) {
+    public StopListService(StopListRepo repository,StopListMapper mapper, ExcelHelper excelHelper) {
         super(repository, mapper);
-        this.repo = repo;
         this.excelHelper = excelHelper;
     }
 
-
     @Transactional
     public ResponseEntity<?> uploadFile(MultipartFile files) {
-        List<StopListEntity> list = excelHelper.excelToList(files);
-        List<StopListEntity> savedList = new LinkedList<>();
+        List<StopListDto> dtoList = excelHelper.excelToList(files);
+        List<StopListEntity> savedList;
         try {
-            if (repo.count() != 0)
-                repo.deleteAll();
-            savedList = repo.saveAll(list);
+            if (getRepository().count() != 0)
+                getRepository().deleteAll();
+            savedList = creatAll(dtoList);
         } catch (RuntimeException exception) {
             throw new DatabaseException(String.format(ApiErrorMessages.INTERNAL_SERVER_ERROR + "%s", exception.getMessage()));
         }
-        return ResponseEntity.ok(savedList);
+        return ResponseEntity.ok(getMapper().convertFromEntityList(savedList));
     }
 
     @Override
